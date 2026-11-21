@@ -1,324 +1,947 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AutoTube AI</title>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Autotube AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0B0D10; --card:#14171C; --card2:#191D23; --text:#FFFFFF; --sub:#9CA3AF;
-    --accent:#7C5CFF; --accent2:#5B8CFF; --line:#22262D; --good:#3ED598;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-    font-family:'Manrope','Inter',system-ui,-apple-system,Segoe UI,sans-serif;}
-  a{color:inherit;text-decoration:none;}
-  .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
-  .view{display:none;}
-  .view.active{display:block;}
+/* Layout: clean product site. Header, split hero, three steps, one flow strip, four connections, short FAQ, CTA, footer. Second view is a three-field scheduler. */
+:root{
+  --bg:#F7F8FA; --surface:#FFFFFF; --soft:#EEF1F6; --fg:#0F1524; --muted:#5A6477; --line:#DFE3EC;
+  --accent:#D92B1A; --on-accent:#FFFFFF; --tint:rgba(217,43,26,.09); --ok:#0A8F70;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Instrument Sans','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A0E19; --surface:#121829; --soft:#182036; --fg:#EAEEF7; --muted:#9AA5BC; --line:#242D45;
+  --accent:#FF5A47; --on-accent:#15080A; --tint:rgba(255,90,71,.13); --ok:#2FD4A7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A0E19; --surface:#121829; --soft:#182036; --fg:#EAEEF7; --muted:#9AA5BC; --line:#242D45;
+  --accent:#FF5A47; --on-accent:#15080A; --tint:rgba(255,90,71,.13); --ok:#2FD4A7; color-scheme:dark}
 
-  /* NAV */
-  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;
-    border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(11,13,16,.9);backdrop-filter:blur(6px);z-index:10;}
-  .logo{font-weight:800;font-size:17px;letter-spacing:-.02em;}
-  .logo span{color:var(--accent2);}
-  .navlinks{display:flex;gap:28px;font-size:14px;color:var(--sub);}
-  .navlinks a:hover{color:var(--text);}
-  .navbtn{background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,5.6vw,4rem);font-weight:800}
+h2{font-size:clamp(1.8rem,3.6vw,2.5rem);font-weight:800}
+h3{font-size:1.15rem;font-weight:600}
+p{margin:0}
+.wrap{max-width:1080px;margin-inline:auto}
+.lead{color:var(--muted);font-size:1.1rem;max-width:56ch}
+section{padding-block:clamp(56px,8vw,96px)}
+.head{display:grid;gap:12px;margin-bottom:36px;max-width:640px}
+.kicker{font-weight:600;font-size:.88rem;color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font:600 .98rem/1 var(--body);padding:.95rem 1.4rem;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.primary:hover{box-shadow:0 10px 26px -10px var(--accent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px}
 
-  /* HERO */
-  .hero{text-align:center;padding:96px 24px 64px;}
-  .badge{display:inline-block;font-size:13px;color:var(--accent2);background:rgba(91,140,255,.1);
-    padding:6px 14px;border-radius:20px;margin-bottom:24px;}
-  h1{font-size:52px;line-height:1.08;letter-spacing:-.02em;margin:0 0 20px;font-weight:800;max-width:680px;margin-left:auto;margin-right:auto;}
-  .sub{color:var(--sub);font-size:18px;max-width:520px;margin:0 auto 32px;line-height:1.55;}
-  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-  .btn-primary{background:var(--accent);color:#fff;padding:13px 22px;border-radius:9px;font-weight:600;font-size:15px;border:none;cursor:pointer;}
-  .btn-ghost{background:transparent;color:var(--text);padding:13px 22px;border-radius:9px;font-weight:600;font-size:15px;border:1px solid var(--line);cursor:pointer;}
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:66px}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;font:800 1.25rem/1 var(--display);letter-spacing:-.03em}
+.logo .mark{width:32px;height:32px;border-radius:9px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center}
+.logo .mark svg{width:15px;height:15px;fill:currentColor}
+.logo em{font-style:normal;color:var(--accent)}
+nav.main{display:flex;align-items:center;gap:4px}
+nav.main a{text-decoration:none;font-weight:500;font-size:.95rem;color:var(--muted);padding:.5rem .85rem;border-radius:8px}
+nav.main a:hover{color:var(--fg)}
+nav.main a.cta{background:var(--accent);color:var(--on-accent);font-weight:600;margin-left:8px}
+.burger{display:none;background:var(--surface);border:1.5px solid var(--line);color:var(--fg);border-radius:9px;width:42px;height:42px;cursor:pointer;font-size:1.1rem;place-items:center}
+@media(max-width:760px){
+  .burger{display:grid}
+  nav.main{display:none;position:absolute;left:0;right:0;top:66px;flex-direction:column;align-items:stretch;background:var(--bg);border-bottom:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-left,0px)) 16px}
+  nav.main.open{display:flex}
+  nav.main a{padding:.8rem}
+  nav.main a.cta{margin:6px 0 0;text-align:center}
+}
 
-  /* FAKE DASHBOARD CARD */
-  .demo{max-width:420px;margin:56px auto 0;background:var(--card);border:1px solid var(--line);
-    border-radius:14px;padding:22px;text-align:left;}
-  .demo-title{font-size:14px;color:var(--sub);margin-bottom:16px;}
-  .demo-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:14px;border-bottom:1px solid var(--line);}
-  .demo-row:last-child{border-bottom:none;}
-  .ok{color:var(--good);font-size:13px;}
+/* hero */
+.hero{padding-top:clamp(40px,7vw,84px)}
+.hero .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.hero h1 span{color:var(--accent)}
+.hero .lead{margin-top:20px}
+.hero .row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero small{display:block;margin-top:16px;color:var(--muted);font-size:.88rem}
+.run{padding:22px;display:grid;gap:0;box-shadow:0 30px 60px -36px rgba(0,0,0,.4)}
+.run .hd{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted);padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.run .hd b{color:var(--fg);font-weight:600;font-size:.95rem}
+.pill{font-size:.74rem;font-weight:600;padding:.25rem .6rem;border-radius:99px;background:var(--tint);color:var(--accent)}
+.it{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+.it:last-child{border-bottom:0}
+.it .d{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--muted);font-size:.8rem;font-weight:600}
+.it.done .d{background:var(--ok);color:var(--on-accent)}
+.it.now .d{background:var(--accent);color:var(--on-accent)}
+.it b{font-weight:600;font-size:.95rem;display:block}
+.it span.s{font-size:.82rem;color:var(--muted)}
+.it .t{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+@media(max-width:860px){.hero .grid{grid-template-columns:1fr;gap:36px}}
 
-  /* SECTIONS */
-  section{padding:64px 24px;border-top:1px solid var(--line);}
-  .center{text-align:center;}
-  h2{font-size:32px;letter-spacing:-.02em;margin:0 0 10px;font-weight:800;}
-  .lead{color:var(--sub);font-size:16px;max-width:480px;margin:0 auto 40px;}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px}
+.step{padding:26px;display:grid;gap:10px;align-content:start}
+.step .n{width:38px;height:38px;border-radius:10px;background:var(--tint);color:var(--accent);display:grid;place-items:center;font:800 1.05rem var(--display)}
+.step p{color:var(--muted);font-size:.97rem}
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:900px;margin:0 auto;}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;}
-  .card .num{font-size:13px;color:var(--accent2);font-weight:700;margin-bottom:10px;}
-  .card h3{font-size:16px;margin:0 0 8px;}
-  .card p{color:var(--sub);font-size:14px;line-height:1.5;margin:0;}
+/* flow strip */
+.band{background:var(--surface);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));border-block:1px solid var(--line)}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;align-items:start}
+.fn{display:grid;gap:10px;justify-items:center;text-align:center;position:relative;padding:0 6px}
+.fn:not(:last-child)::after{content:"";position:absolute;top:27px;left:calc(50% + 34px);right:calc(-50% + 34px);border-top:2px dashed var(--line)}
+.fn .ic{width:54px;height:54px;border-radius:16px;background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;position:relative;z-index:1}
+.fn .ic svg{width:24px;height:24px;fill:none;stroke:var(--fg);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fn.hot .ic{background:var(--accent);border-color:var(--accent)}
+.fn.hot .ic svg{stroke:var(--on-accent)}
+.fn b{font-weight:600;font-size:.95rem}
+.fn span{font-size:.84rem;color:var(--muted);line-height:1.4}
+@media(max-width:720px){
+  .flow{grid-template-columns:1fr;gap:6px}
+  .fn{grid-template-columns:54px 1fr;justify-items:start;text-align:left;gap:4px 16px;padding:8px 0}
+  .fn .ic{grid-row:1/3}
+  .fn:not(:last-child)::after{top:62px;bottom:-14px;left:26px;right:auto;border-top:0;border-left:2px dashed var(--line)}
+}
 
-  /* WORKFLOW */
-  .flow{display:flex;flex-direction:column;align-items:center;gap:0;max-width:280px;margin:0 auto;}
-  .flow .box{width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;}
-  .flow .box .icon{font-size:22px;margin-bottom:6px;}
-  .flow .box .tag{color:var(--sub);font-size:12px;}
-  .arrow{color:var(--sub);font-size:20px;padding:6px 0;}
+/* connect */
+.conn{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px}
+.cn{padding:22px;display:grid;gap:8px;align-content:start}
+.cn .ic{width:40px;height:40px;border-radius:10px;background:var(--tint);display:grid;place-items:center;margin-bottom:6px}
+.cn .ic svg{width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cn p{color:var(--muted);font-size:.93rem}
+.cn small{color:var(--fg);font-size:.82rem;font-weight:500;margin-top:4px;padding-top:12px;border-top:1px solid var(--line)}
+.cn small span{color:var(--muted);font-weight:400}
+.safe{margin-top:20px;color:var(--muted);font-size:.9rem}
 
-  footer{padding:40px 24px;text-align:center;color:var(--sub);font-size:13px;border-top:1px solid var(--line);}
-  footer .flinks{display:flex;gap:20px;justify-content:center;margin-top:14px;font-size:13px;}
+/* faq */
+.faq{display:grid;max-width:760px;border-top:1px solid var(--line)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:20px 4px;font:600 1.08rem var(--display);display:flex;justify-content:space-between;align-items:center;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:400 1.5rem/1 var(--body);color:var(--accent);flex:none;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 4px 22px;color:var(--muted);max-width:62ch}
 
-  /* AUTOMATION PAGE */
-  .auto-wrap{max-width:560px;margin:0 auto;padding:48px 24px 80px;}
-  .auto-head h1{font-size:28px;text-align:left;margin-bottom:6px;}
-  .auto-head p{color:var(--sub);font-size:14px;margin-bottom:36px;}
-  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:14px;opacity:.5;pointer-events:none;transition:opacity .25s;}
-  .step.active{opacity:1;pointer-events:auto;}
-  .step.done{opacity:1;}
-  .step-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
-  .step-num{font-size:12px;color:var(--sub);font-weight:700;}
-  .step-title{font-weight:700;font-size:15px;}
-  .step p{color:var(--sub);font-size:13px;margin:0 0 14px;line-height:1.5;}
-  .step-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
-  .step-btn:disabled{opacity:.4;cursor:not-allowed;}
-  .step-status{color:var(--good);font-size:13px;font-weight:600;display:none;}
-  .step.done .step-status{display:block;}
-  .step.done .step-btn{display:none;}
-  .video-pick{background:var(--card2);border:1px dashed var(--line);border-radius:10px;padding:14px;font-size:13px;color:var(--sub);margin-bottom:14px;}
-  .schedule-row{display:flex;gap:12px;margin-bottom:14px;}
-  .field{flex:1;display:flex;flex-direction:column;gap:6px;}
-  .field label{font-size:12px;color:var(--sub);}
-  .field input{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
-    color:var(--text);font-size:13px;font-family:inherit;}
-  .field input::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.6;}
+/* cta */
+.cta-box{background:var(--fg);color:var(--bg);border-radius:22px;padding:clamp(32px,6vw,60px);display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between}
+.cta-box p{opacity:.75;margin-top:10px}
+.cta-box .btn.primary{border-color:var(--bg)}
 
-  .go-btn{width:100%;background:var(--accent);color:#fff;border:none;padding:16px;border-radius:10px;
-    font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;}
-  .go-btn:disabled{opacity:.35;cursor:not-allowed;}
-  .go-sub{text-align:center;color:var(--sub);font-size:13px;margin-top:10px;}
+/* footer */
+footer{margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--surface);padding-block:44px calc(26px + env(safe-area-inset-bottom,0px))}
+.fr{display:flex;flex-wrap:wrap;gap:28px;justify-content:space-between;align-items:flex-start}
+.fr p{color:var(--muted);font-size:.92rem;margin-top:12px;max-width:34ch}
+.fr ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 26px}
+.fr a{text-decoration:none;font-size:.95rem;color:var(--muted)}
+.fr a:hover{color:var(--accent)}
+.legal{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
 
-  /* PROCESSING */
-  .proc{display:none;text-align:center;padding:40px 0;}
-  .proc.active{display:block;}
-  .proc-item{display:flex;align-items:center;gap:10px;justify-content:center;padding:10px 0;font-size:14px;color:var(--sub);opacity:.3;transition:opacity .25s;}
-  .proc-item.on{opacity:1;color:var(--text);}
-  .proc-item .dot{width:8px;height:8px;border-radius:50%;background:var(--line);}
-  .proc-item.on .dot{background:var(--good);}
-
-  /* COMPLETE */
-  .done-screen{display:none;text-align:center;padding:20px 0;}
-  .done-screen.active{display:block;}
-  .done-screen .emoji{font-size:40px;margin-bottom:10px;}
-  .done-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:left;margin:24px 0;}
-  .done-card .label{color:var(--sub);font-size:12px;margin-bottom:4px;}
-  .done-card .val{font-size:15px;margin-bottom:16px;}
+/* automation page */
+.desk{padding-block:clamp(36px,6vw,72px)}
+.crumb{font-size:.88rem;color:var(--muted);margin-bottom:18px}
+.crumb a{color:var(--accent);text-decoration:none}
+.desk-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;margin-top:32px}
+@media(max-width:860px){.desk-grid{grid-template-columns:1fr}}
+.form{padding:clamp(22px,3vw,32px);display:grid;gap:20px}
+label.fl,div.fl{display:grid;gap:7px;font-weight:600;font-size:.92rem;min-width:0}
+.fl .sub{font-weight:400;font-size:.84rem;color:var(--muted)}
+.fl .sub a{color:var(--accent);font-weight:600}
+.kr{display:flex;gap:8px}
+.kr input{flex:1}
+.btn.sm{padding:.7rem 1rem;font-size:.88rem;flex:none}
+.col{display:grid;gap:16px;min-width:0}
+.gcon{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
+.gcon b{display:block;font-size:.92rem}
+.gcon span{font-size:.86rem;color:var(--muted)}
+.gcon span.on{color:var(--ok);font-weight:600}
+.gcon small{display:block;font-size:.78rem;color:var(--muted)}
+.gbtns{display:flex;gap:10px;align-items:center}
+.ch{list-style:none;margin:-6px 0 0;padding:0;display:grid;gap:8px}
+.ch li{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
+.ch li.on{border-color:var(--accent);background:var(--tint)}
+.ch img,.ch .av{width:36px;height:36px;border-radius:50%;background:var(--soft);object-fit:cover;display:grid;place-items:center;font-weight:700;color:var(--muted)}
+.ch b{font-size:.92rem;display:block;overflow-wrap:anywhere}
+.ch small{color:var(--muted);font-size:.78rem}
+.ch .acts{display:flex;gap:6px}
+.ch button{background:var(--soft);border:0;color:var(--fg);cursor:pointer;font:600 .8rem var(--body);padding:.45rem .7rem;border-radius:8px}
+.ch button.x{background:none;color:var(--muted);font-size:1.1rem;padding:.2rem .5rem}
+.ch button:hover{color:var(--accent)}
+.status{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:12px;background:var(--tint);font-size:.92rem}
+.status b::before{content:"✓ ";color:var(--ok)}
+.lnk{background:none;border:0;color:var(--accent);font:600 .9rem var(--body);cursor:pointer;padding:.25rem 0}
+input[type=text],input[type=password],input[type=date],input[type=time]{width:100%;min-width:0;font:400 1rem var(--body);color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:.85rem .95rem}
+input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--tint)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:14px}
+.seg{display:flex;gap:8px}
+.seg label{position:relative;flex:1}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.seg span{display:block;text-align:center;padding:.75rem 1rem;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);font-weight:600;font-size:.92rem}
+.seg input:checked + span{border-color:var(--accent);background:var(--tint)}
+.seg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+#when-seg span{padding:.75rem .4rem;font-size:.88rem}
+textarea,select{width:100%;min-width:0;font:400 1rem var(--body);color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:.85rem .95rem}
+textarea{resize:vertical;min-height:112px;line-height:1.5}
+textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--tint)}
+.daily{display:grid;gap:18px;padding:18px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
+.daily .seg span{background:var(--surface)}
+.daily .sub{font-weight:400;font-size:.84rem;color:var(--muted)}
+.daily .hint{margin:0}
+.next{padding:11px 14px;border-radius:10px;background:var(--tint);font-size:.92rem;font-weight:600;font-variant-numeric:tabular-nums}
+.next:empty{display:none}
+.conn-set summary{font:600 .9rem var(--body);padding:4px 0;color:var(--muted)}
+.conn-set{border:0}
+.conn-set .hint{margin-top:8px}
+.st{font-size:.78rem;font-weight:600;color:var(--ok)}
+.err{color:var(--accent);font-size:.86rem;min-height:1.2em;margin-top:-10px}
+.side h3{margin-bottom:14px}
+.q{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.q li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.q b{font-weight:600;overflow-wrap:anywhere}
+.q small{color:var(--muted);font-size:.84rem;grid-column:1}
+.q .acts{grid-column:2;grid-row:1/3;display:flex;gap:6px}
+.q button{background:var(--soft);border:0;color:var(--fg);cursor:pointer;font:600 .8rem var(--body);padding:.5rem .75rem;border-radius:8px}
+.q button.x{background:none;color:var(--muted);font-size:1.15rem;padding:.25rem .55rem}
+.q button:hover{color:var(--accent)}
+.empty{color:var(--muted);padding:26px;text-align:center;border:1.5px dashed var(--line);border-radius:12px;font-size:.95rem}
+.hint{color:var(--muted);font-size:.86rem;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:.8rem 1.2rem;border-radius:10px;font-weight:600;font-size:.92rem;opacity:0;pointer-events:none;transition:.25s;z-index:80}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* upload & schedule tab */
+.tabs{display:flex;gap:8px;padding:5px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface)}
+.tabs button{flex:1;font:600 .92rem var(--body);padding:.7rem .6rem;border:0;border-radius:8px;background:none;color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--tint);color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--accent)}
+input[type=file]{width:100%;font:400 .95rem var(--body);color:var(--fg);padding:.7rem;border:1.5px dashed var(--line);border-radius:10px;background:var(--bg)}
+.upl{list-style:none;margin:-6px 0 0;padding:0;display:grid;gap:10px}
+.upl li{padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);display:grid;gap:8px}
+.upl .fh{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.upl .fh b{font-size:.92rem;overflow-wrap:anywhere}
+.upl .fh small{color:var(--muted);font-size:.78rem;white-space:nowrap}
+.upl .fh button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:.1rem .4rem}
+.upl .fh button:hover{color:var(--accent)}
+.upl .man{display:grid;gap:8px}
+.upl .man textarea{min-height:70px}
+.upl .bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden}
+.upl .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.upl .stt{color:var(--muted);font-size:.82rem}
+.upl .stt.bad{color:var(--accent);font-weight:600}
+.upl .stt.good{color:var(--ok);font-weight:600}
+.acc{padding:clamp(24px,4vw,36px);display:grid;gap:18px;align-content:start}
+.gate-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:860px){.gate-grid{grid-template-columns:1fr}}
+body.locked nav.main,body.locked .burger{display:none}
+.acc .g2{align-items:start}
+.acc .ok{color:var(--ok);font-weight:600}
+.acc .err{margin-top:0}
+.note{padding:12px 14px;border-radius:10px;background:var(--tint);font-size:.9rem}
+.note a{color:var(--accent);font-weight:600}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
-</head>
-<body>
 
-<nav>
-  <div class="logo">AutoTube <span>AI</span></div>
-  <div class="navlinks">
-    <a href="#" onclick="show('home')">Home</a>
+<header class="top">
+  <div class="in wrap">
+    <a class="logo" href="#top" aria-label="Autotube AI home"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>Autotube <em>AI</em></a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">☰</button>
+    <nav class="main" id="nav">
+      <a href="#how">How it works</a>
+      <a href="#connect">Setup</a>
+      <a href="#faq">FAQ</a>
+      <a class="cta" href="#automation">Automation</a>
+    </nav>
   </div>
-  <button class="navbtn" onclick="show('automation')">Start Automating →</button>
-</nav>
+</header>
 
-<!-- HOME -->
-<div id="home" class="view active">
-  <div class="hero">
-    <div class="badge">✦ AI-powered YouTube automation</div>
-    <h1>Turn your videos into YouTube content, automatically.</h1>
-    <p class="sub">Connect your Google Drive and YouTube channel. Our AI handles the repetitive work — from generating your video details to uploading it to YouTube.</p>
-    <div class="cta-row">
-      <button class="btn-primary" onclick="show('automation')">Start Automating →</button>
-    </div>
-    <div class="demo">
-      <div class="demo-title">AI YouTube Automation</div>
-      <div class="demo-row"><span>Google Drive</span><span class="ok">✓ Connected</span></div>
-      <div class="demo-row"><span>🎬 my-new-video.mp4</span><span class="ok">✦ Processing</span></div>
-      <div class="demo-row"><span>Title, description &amp; tags</span><span class="ok">✓ Generated</span></div>
-      <div class="demo-row"><span>▶ YouTube</span><span class="ok">✓ Uploaded</span></div>
-    </div>
-  </div>
-
-  <section>
-    <div class="center"><h2>Why creators automate uploads</h2><p class="lead">Manual uploading eats time you could spend making the next video.</p></div>
-    <div class="grid">
-      <div class="card"><h3>Save hours every week</h3><p>No more writing titles, descriptions and tags by hand for every single upload.</p></div>
-      <div class="card"><h3>Never miss a schedule</h3><p>Set a date and time once — your video goes live even if you're not at your desk.</p></div>
-      <div class="card"><h3>Consistent metadata</h3><p>Every video gets a clear title and description, formatted the same way each time.</p></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="center"><h2>What AI handles for you</h2><p class="lead">Drop a file in Drive — everything after that is automatic.</p></div>
-    <div class="grid">
-      <div class="card"><h3>✦ Title</h3><p>Writes a clear, YouTube-ready title based on your video.</p></div>
-      <div class="card"><h3>✦ Description</h3><p>Generates a relevant, searchable description.</p></div>
-      <div class="card"><h3>✦ Tags</h3><p>Adds the metadata that helps your video get found.</p></div>
-      <div class="card"><h3>✦ Scheduled publish</h3><p>Uploads at the exact date and time you set.</p></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="center"><h2>Common questions</h2></div>
-    <div class="grid" style="grid-template-columns:1fr;max-width:640px;">
-      <div class="card"><h3>Do I need to install anything?</h3><p>No. Everything runs through your connected Google Drive and YouTube accounts — there's nothing to install.</p></div>
-      <div class="card"><h3>Can I still edit the title before it's published?</h3><p>Yes — the generated title and description are editable before your video goes live.</p></div>
-      <div class="card"><h3>What video formats are supported?</h3><p>Any format YouTube accepts: MP4, MOV and MKV all work.</p></div>
-      <div class="card"><h3>Is there a cost right now?</h3><p>The automation is free while we're testing. Pricing will come later, once it's ready for wider use.</p></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="center"><h2>What do you need?</h2></div>
-    <div class="grid">
-      <div class="card"><h3>Google Account</h3><p>To connect Drive and YouTube.</p></div>
-      <div class="card"><h3>YouTube Channel</h3><p>Where your videos will be uploaded.</p></div>
-      <div class="card"><h3>Google Drive</h3><p>Place your video in the connected folder.</p></div>
-      <div class="card"><h3>A finished video</h3><p>Upload it and let automation handle the rest.</p></div>
-    </div>
-    <div class="center" style="margin-top:32px;"><button class="btn-primary" onclick="show('automation')">Get started →</button></div>
-  </section>
-
-  <footer>
-    <div class="logo">AutoTube <span>AI</span></div>
-    <div>AI-powered YouTube automation for creators who'd rather make videos than upload them.</div>
-    <div class="flinks"><a href="#" onclick="show('automation')">Get Started</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
-    <div style="margin-top:14px;opacity:.6;">hello@autotube.ai</div>
-  </footer>
-</div>
-
-<!-- AUTOMATION -->
-<div id="automation" class="view">
-  <div class="auto-wrap">
-    <div id="setup">
-      <div class="auto-head"><h1>YouTube Automation</h1><p>Connect your accounts and start your first automated upload.</p></div>
-
-      <div class="step active" id="step1">
-        <div class="step-head"><span class="step-num">01</span><span class="step-title">Google Drive</span></div>
-        <p>Connect the Drive where your videos are stored.</p>
-        <button class="step-btn" onclick="completeStep(1)">Connect Drive</button>
-        <div class="step-status">✓ Google Drive connected</div>
+<main id="gate" hidden>
+  <section class="desk">
+    <div class="wrap">
+      <div class="kicker" style="margin-bottom:12px">Private beta</div>
+      <h1 style="font-size:clamp(2.1rem,4.6vw,3.2rem)">Get access to Autotube AI</h1>
+      <p class="lead" style="margin-top:12px">Autotube AI is invite-only for now. Request access with your Gmail. When you are approved, enter the same Gmail here and the full site opens.</p>
+      <div class="gate-grid" style="margin-top:32px">
+        <form class="card acc" id="accform" novalidate>
+          <div><h3>1. Request access</h3><p class="hint" style="margin-top:6px">Tell us who you are. We add you, usually within a day.</p></div>
+          <label class="fl" for="acc-name">Your name<input type="text" id="acc-name" maxlength="60" autocomplete="name" placeholder="Your name"></label>
+          <label class="fl" for="acc-email">Gmail address<input type="text" id="acc-email" maxlength="120" inputmode="email" autocomplete="email" placeholder="you@gmail.com"></label>
+          <div class="err" id="e-acc"></div>
+          <div class="ok" id="ok-acc" hidden>Thanks. Your request is in. Come back after you are approved and enter your Gmail on the right.</div>
+          <button class="btn primary" type="submit" id="acc-go">Request access</button>
+          <p class="hint" style="margin:0">Use the Gmail you will connect later. Google shows an "unverified app" notice during the beta. Click Advanced, then Continue.</p>
+        </form>
+        <form class="card acc" id="chkform" novalidate>
+          <div><h3>2. Already approved?</h3><p class="hint" style="margin-top:6px">Enter your Gmail to open the site.</p></div>
+          <label class="fl" for="chk-email">Gmail address<input type="text" id="chk-email" maxlength="120" inputmode="email" autocomplete="email" placeholder="you@gmail.com"></label>
+          <div class="err" id="e-chk"></div>
+          <button class="btn primary" type="submit" id="chk-go">Enter</button>
+        </form>
       </div>
+    </div>
+  </section>
+</main>
 
-      <div class="step" id="step2">
-        <div class="step-head"><span class="step-num">02</span><span class="step-title">YouTube</span></div>
-        <p>Choose the YouTube channel where your videos will be uploaded.</p>
-        <button class="step-btn" onclick="completeStep(2)">Connect YouTube</button>
-        <div class="step-status">✓ YouTube connected</div>
-      </div>
-
-      <div class="step" id="step3">
-        <div class="step-head"><span class="step-num">03</span><span class="step-title">Video &amp; Schedule</span></div>
-        <p>Enter the exact file name as it appears in your connected Drive folder, and choose when it should go live.</p>
-        <div class="field" style="margin-bottom:14px;">
-          <label>Drive file name</label>
-          <input type="text" id="videoFileName" placeholder="my-new-video.mp4">
+<main id="landing">
+  <section class="hero" id="top">
+    <div class="wrap grid">
+      <div>
+        <h1>Automate your YouTube channel <span>now.</span></h1>
+        <p class="lead">Just give a topic and leave the rest to us. Autotube AI writes the script, makes the video and uploads it to your channel on a click, and you stay in control of when it goes live.</p>
+        <div class="row">
+          <a class="btn primary" href="#automation">Start automating</a>
+          <a class="btn" href="#how">How it works</a>
         </div>
-        <div class="schedule-row">
-          <div class="field">
-            <label>Date</label>
-            <input type="date" id="uploadDate">
-          </div>
-          <div class="field">
-            <label>Time</label>
-            <input type="time" id="uploadTime">
-          </div>
+        <small>Runs on Make, Gemini, JSON2Video, Google Drive and YouTube.</small>
+      </div>
+      <div class="card run" aria-hidden="true">
+        <div class="hd"><b>5 habits of productive developers</b><span class="pill">Running</span></div>
+        <div class="it done"><span class="d">✓</span><div><b>Script written</b><span class="s">Gemini · 6 scenes</span></div><span class="t">0:30</span></div>
+        <div class="it done"><span class="d">✓</span><div><b>Video created</b><span class="s">JSON2Video · 9:16</span></div><span class="t">7:10</span></div>
+        <div class="it done"><span class="d">✓</span><div><b>Saved to Google Drive</b><span class="s">Autotube Videos</span></div><span class="t">7:40</span></div>
+        <div class="it now"><span class="d">4</span><div><b>Uploading to YouTube</b><span class="s">Scheduled for 6:00 PM</span></div><span class="t">now</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="padding-top:clamp(24px,4vw,48px)">
+    <div class="wrap">
+      <div class="head"><div class="kicker">How it works</div><h2>Three simple steps</h2></div>
+      <div class="steps">
+        <div class="card step"><div class="n">1</div><h3>Connect once</h3><p>Add your keys and sign in with Google one time. They are saved in your browser.</p></div>
+        <div class="card step"><div class="n">2</div><h3>Give a topic</h3><p>Type a topic and click. Gemini writes the script and JSON2Video makes the video in about 8 minutes.</p></div>
+        <div class="card step"><div class="n">3</div><h3>It goes live</h3><p>Your copy is saved to Google Drive, then the video is uploaded to YouTube.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="head"><div class="kicker">The pipeline</div><h2>From idea to upload, automatically</h2></div>
+      <div class="flow" role="list">
+        <div class="fn hot" role="listitem"><div class="ic"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><b>Topic</b><span>You send it from the Automation page</span></div>
+        <div class="fn" role="listitem"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></div><b>Gemini</b><span>Writes the script</span></div>
+        <div class="fn" role="listitem"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zM7 5v14M17 5v14"/></svg></div><b>JSON2Video</b><span>Creates the video</span></div>
+        <div class="fn" role="listitem"><div class="ic"><svg viewBox="0 0 24 24"><path d="M8 3h8l6 10-4 7H6l-4-7zM8 3l6 10M16 3l-6 10"/></svg></div><b>Google Drive</b><span>Stores your copy</span></div>
+        <div class="fn" role="listitem"><div class="ic"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></div><b>YouTube</b><span>Publishes on schedule</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="connect">
+    <div class="wrap">
+      <div class="head"><div class="kicker">Setup</div><h2>Connect four accounts, once</h2><p class="lead">Add them one time on the Automation page. After that, every video needs only a topic.</p></div>
+      <div class="conn">
+        <div class="card cn"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zM7 5v14M17 5v14"/></svg></div><h3>JSON2Video key</h3><p>Creates your videos.</p><small>Get it: <span>Click Get my key on the Automation page</span></small></div>
+        <div class="card cn"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></div><h3>Gemini key</h3><p>Writes your scripts.</p><small>Get it: <span>Click Get my key on the Automation page</span></small></div>
+        <div class="card cn"><div class="ic"><svg viewBox="0 0 24 24"><path d="M8 3h8l6 10-4 7H6l-4-7zM8 3l6 10M16 3l-6 10"/></svg></div><h3>Google Drive</h3><p>Keeps every video.</p><small>Get it: <span>Click Connect Google Drive on the Automation page</span></small></div>
+        <div class="card cn"><div class="ic"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></div><h3>YouTube account</h3><p>Publishes your videos.</p><small>Get it: <span>Click Add YouTube account. You can add more than one channel.</span></small></div>
+      </div>
+      <p class="safe">Your keys stay in your own browser and are sent only with your own requests.</p>
+    </div>
+  </section>
+
+  <section id="faq" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><div class="kicker">FAQ</div><h2>Common questions</h2></div>
+      <div class="faq">
+        <details open><summary>How long does one video take?</summary><p>About 8 minutes from topic to saved file in the latest run. Longer videos take longer to render.</p></details>
+        <details><summary>Can it make and upload a video every day?</summary><p>Yes. On the Automation page choose Every day, set a time, and either list your topics (used in order) or let AI pick topics for your niche. You can also post on weekdays only or once a week, and set a stop date.</p></details>
+        <details><summary>Where do I put my API keys?</summary><p>On the Automation page, the first time you open it. Click Get my key, copy the key on the page that opens, then come back and allow the paste. They are saved in your browser, so you enter them only once.</p></details>
+        <details><summary>Can I upload and schedule videos I already have?</summary><p>Yes. On the Automation page open the Upload &amp; Schedule Videos tab, choose one or many video files, and either let AI write the titles and descriptions or write your own. Then upload now, or schedule them with a gap between each video.</p></details>
+        <details><summary>Can I connect more than one YouTube channel?</summary><p>Yes. Click Add another account on the Automation page and choose a different Google account. Then pick which channel each video goes to.</p></details>
+        <details><summary>How many videos can I upload each day?</summary><p>That depends on your YouTube API quota. New Google Cloud projects usually allow only a few uploads a day, and you can request more in Google Cloud Console.</p></details>
+        <details><summary>Why are my uploads private?</summary><p>YouTube may keep uploads from unaudited API projects private. Check them in YouTube Studio, and change visibility there once your project is approved.</p></details>
+        <details><summary>What if a video fails to render?</summary><p>The run stops and logs the error. Other scheduled topics are not affected, and you can run the topic again from Make.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-box">
+        <div><h2>Automate your channel today</h2><p>Give a topic. We handle the rest.</p></div>
+        <a class="btn primary" href="#automation">Start automating</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="app" hidden>
+  <section class="desk">
+    <div class="wrap">
+      <div class="crumb"><a href="#top">Home</a> / Automation</div>
+      <h1 style="font-size:clamp(2.1rem,4.6vw,3.2rem)">Create a video</h1>
+      <p class="lead" style="margin-top:12px">Enter a topic, then upload now, choose a time, or repeat it every day.</p>
+      <div class="desk-grid">
+        <div class="col">
+        <div class="card form" id="setup" hidden>
+          <div><h3>Connect your accounts</h3><p class="hint" style="margin-top:6px">Add these one time. They are saved in this browser and used for every video.</p></div>
+          <div class="fl"><label for="k-j2v">JSON2Video API key</label>
+            <span class="kr"><input type="password" id="k-j2v" autocomplete="off" placeholder="Paste your key"><button class="btn sm" type="button" data-paste="k-j2v">Paste</button></span>
+            <span class="sub"><a class="getkey" href="https://json2video.com/get-api-key/" target="_blank" rel="noopener" data-for="k-j2v">Get my key</a> opens JSON2Video in a new tab. Copy your key there, come back, and allow the paste.</span></div>
+          <div class="fl"><label for="k-gem">Gemini API key</label>
+            <span class="kr"><input type="password" id="k-gem" autocomplete="off" placeholder="Paste your key"><button class="btn sm" type="button" data-paste="k-gem">Paste</button></span>
+            <span class="sub"><a class="getkey" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" data-for="k-gem">Get my key</a> opens Google AI Studio in a new tab. Click Create API key, copy it, come back, and allow the paste.</span></div>
+          <div class="gcon"><div><b>YouTube channels</b><span id="g-state">Not connected</span><small>Where your videos are published</small></div><button class="btn" type="button" id="g-btn">Add YouTube account</button></div>
+          <ul class="ch" id="ch-list" hidden></ul>
+          <div class="gcon"><div><b>Google Drive</b><span id="d-state">Not connected</span><small>Where a copy of each video is saved</small></div><div class="gbtns"><button class="lnk" type="button" id="d-off" hidden>Disconnect</button><button class="btn" type="button" id="d-btn">Connect Google Drive</button></div></div>
+          <div class="err" id="e-keys"></div>
+          <button class="btn primary" type="button" id="save-keys">Save and continue</button>
         </div>
-        <button class="step-btn" onclick="completeStep(3)">Confirm</button>
-        <div class="step-status">✓ Video &amp; schedule set</div>
+        <div class="status" id="status" hidden><span><b>Accounts connected</b> <span id="st-detail"></span></span><button type="button" class="lnk" id="edit-keys">Edit keys</button></div>
+        <div class="tabs" id="tabs" role="tablist" hidden>
+          <button type="button" id="tab-ai" class="on" role="tab">AI video</button>
+          <button type="button" id="tab-up" role="tab">Upload &amp; Schedule Videos</button>
+        </div>
+        <form class="card form" id="form" novalidate hidden>
+          <label class="fl" for="chsel" id="ch-lbl" hidden>Upload to channel<select id="chsel"></select></label>
+          <label class="fl" for="topic" id="topic-lbl">Topic
+            <input type="text" id="topic" maxlength="140" placeholder="e.g. 5 habits of productive developers" autocomplete="off"></label>
+          <div class="err" id="e-topic"></div>
+          <div class="seg" id="when-seg" role="radiogroup" aria-label="When to upload">
+            <label><input type="radio" name="when" value="now" checked><span>Upload now</span></label>
+            <label><input type="radio" name="when" value="later"><span>Schedule</span></label>
+            <label><input type="radio" name="when" value="daily"><span>Every day</span></label>
+          </div>
+          <div class="g2" id="when-fields" hidden>
+            <label class="fl" for="date">Date<input type="date" id="date"></label>
+            <label class="fl" for="time">Time<input type="time" id="time"></label>
+          </div>
+          <div class="daily" id="daily-fields" hidden>
+            <div class="g2">
+              <label class="fl" for="freq">How often<select id="freq"><option value="daily">Every day</option><option value="weekdays">Weekdays (Mon to Fri)</option><option value="weekly">Once a week</option></select></label>
+              <label class="fl" for="dtime">Upload time<input type="time" id="dtime"></label>
+            </div>
+            <div class="g2">
+              <label class="fl" for="dstart">Start date<input type="date" id="dstart"></label>
+              <label class="fl" for="dend">Stop on <span class="sub">Optional</span><input type="date" id="dend"></label>
+            </div>
+            <div class="seg" role="radiogroup" aria-label="Where topics come from">
+              <label><input type="radio" name="tsrc" value="list" checked><span>I will list topics</span></label>
+              <label><input type="radio" name="tsrc" value="auto"><span>AI picks topics</span></label>
+            </div>
+            <label class="fl" for="topics" id="lbl-list">Topics, one per line
+              <textarea id="topics" placeholder="5 habits of productive developers&#10;How to learn any language faster&#10;3 mistakes new investors make"></textarea>
+              <span class="sub">Used in order, one per upload. When the list ends it starts again.</span></label>
+            <label class="fl" for="niche" id="lbl-auto" hidden>Channel niche
+              <input type="text" id="niche" maxlength="100" placeholder="e.g. productivity tips for developers" autocomplete="off">
+              <span class="sub">Gemini picks a fresh topic in this niche for every upload.</span></label>
+            <div class="next" id="next"></div>
+            <p class="hint">Google sign-in in this browser lasts about an hour. For uploads that run while you are away, give Make its own Google connection.</p>
+          </div>
+          <div class="err" id="e-date"></div>
+          <button class="btn primary" type="submit" id="go">Upload now</button>
+        </form>
+        <form class="card form" id="upform" novalidate hidden>
+          <div><h3>Upload and schedule your own videos</h3><p class="hint" style="margin-top:6px">Each video is saved to your Google Drive first, then uploaded to YouTube.</p></div>
+          <label class="fl" for="up-chsel" id="up-ch-lbl" hidden>Upload to channel<select id="up-chsel"></select></label>
+          <div class="fl"><label for="up-files">Your video files</label>
+            <input type="file" id="up-files" accept="video/*" multiple>
+            <span class="sub">Choose one video or many (up to 20).</span></div>
+          <ul class="upl" id="up-list"></ul>
+          <div class="fl"><span>Titles and descriptions</span>
+            <div class="seg" role="radiogroup" aria-label="Titles and descriptions">
+              <label><input type="radio" name="tmode" value="ai" checked><span>AI writes them</span></label>
+              <label><input type="radio" name="tmode" value="manual"><span>I write my own</span></label>
+            </div>
+          </div>
+          <label class="fl" for="up-hint" id="up-hint-lbl">What are the videos about? <span class="sub">Optional</span>
+            <textarea id="up-hint" maxlength="300" placeholder="e.g. quick productivity tips for developers"></textarea>
+            <span class="sub">AI cannot watch the video. It writes the SEO title and description from the file name and this note.</span></label>
+          <div class="fl"><span>When to publish</span>
+            <div class="seg" role="radiogroup" aria-label="When to publish">
+              <label><input type="radio" name="uwhen" value="now" checked><span>Upload now</span></label>
+              <label><input type="radio" name="uwhen" value="later"><span>Schedule</span></label>
+            </div>
+          </div>
+          <div class="daily" id="up-sched" hidden>
+            <div class="g2">
+              <label class="fl" for="up-date">First video date<input type="date" id="up-date"></label>
+              <label class="fl" for="up-time">Time<input type="time" id="up-time"></label>
+            </div>
+            <label class="fl" for="up-gap" id="up-gap-lbl">Gap between videos
+              <select id="up-gap"><option value="1">1 hour</option><option value="3">3 hours</option><option value="6">6 hours</option><option value="12">12 hours</option><option value="24" selected>1 day</option><option value="48">2 days</option><option value="168">1 week</option></select></label>
+            <div class="next" id="up-next"></div>
+          </div>
+          <div class="err" id="e-up"></div>
+          <button class="btn primary" type="submit" id="up-go">Upload videos</button>
+        </form>
+        </div>
+        <aside class="side">
+          <h3>Your videos</h3>
+          <ul class="q" id="queue"></ul>
+          <div class="empty" id="qempty">Videos you create will appear here.</div>
+          <p class="hint">Your keys are never shown in this list. Removing a daily plan here does not stop it in Make; turn the scenario off there.</p>
+        </aside>
       </div>
-
-      <button class="go-btn" id="goBtn" disabled onclick="runAutomation()">🚀 Start Automation</button>
-      <p class="go-sub">AI will prepare your YouTube metadata and upload your video.</p>
     </div>
+  </section>
+</main>
 
-    <div class="proc" id="proc">
-      <div class="proc-item" id="p1"><span class="dot"></span> Video found</div>
-      <div class="proc-item" id="p2"><span class="dot"></span> AI processing</div>
-      <div class="proc-item" id="p3"><span class="dot"></span> Title &amp; description created</div>
-      <div class="proc-item" id="p4"><span class="dot"></span> Uploading to YouTube</div>
-      <div class="proc-item" id="p5"><span class="dot"></span> Done</div>
-    </div>
-
-    <div class="done-screen" id="doneScreen">
-      <div class="emoji">🎉</div>
-      <h2>Your video is live!</h2>
-      <p class="lead" style="margin-bottom:0;">Your video has been successfully uploaded to YouTube.</p>
-      <div class="done-card">
-        <div class="label">Title</div>
-        <div class="val">5 AI Tools Every Student Should Know</div>
-        <div class="label">Scheduled for</div>
-        <div class="val" id="scheduledVal">—</div>
-        <div class="label">Status</div>
-        <div class="val">🟢 Uploaded successfully</div>
+<footer>
+  <div class="wrap">
+    <div class="fr">
+      <div>
+        <a class="logo" href="#top"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>Autotube <em>AI</em></a>
+        <p>Topic in, video out. Automated from script to upload.</p>
       </div>
-      <div class="cta-row">
-        <button class="btn-primary" onclick="alert('This demo has no real YouTube connection yet.')">Watch on YouTube →</button>
-        <button class="btn-ghost" onclick="resetFlow()">Automate another video</button>
-      </div>
+      <ul><li><a href="#how">How it works</a></li><li><a href="#connect">Setup</a></li><li><a href="#faq">FAQ</a></li><li><a href="#automation">Automation</a></li><li><a href="#" id="signout" hidden>Sign out</a></li><li><a href="/privacy">Privacy Policy</a></li><li><a href="/terms">Terms of Service</a></li></ul>
     </div>
+    <div class="legal"><span>© 2026 Autotube AI</span><span>Not affiliated with Google, YouTube, Make or JSON2Video.</span></div>
   </div>
-</div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
-function show(id){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function completeStep(n){
-  const step = document.getElementById('step'+n);
-  step.classList.add('done');
-  const next = document.getElementById('step'+(n+1));
-  if(next) next.classList.add('active');
-  if(n===3) document.getElementById('goBtn').disabled=false;
-}
-const WEBHOOK_URL = 'https://hook.eu1.make.com/cswnp6f44jfi6dhd96kzsopvp9crls7d';
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var landing=$('landing'),app=$('app'),gate=$('gate');
+  var approved=false,ACC_KEY='autotube-access';
+  var acc0=null;try{acc0=JSON.parse(localStorage.getItem(ACC_KEY)||'null')}catch(e){}
+  if(acc0&&acc0.email&&acc0.ts&&Date.now()-acc0.ts<7*864e5)approved=true;
 
-function runAutomation(){
-  const fileName = document.getElementById('videoFileName').value.trim();
-  const d = document.getElementById('uploadDate').value;
-  const t = document.getElementById('uploadTime').value;
-  if(!fileName){
-    alert('Enter the Drive file name first (Step 03) so Make knows which video to upload.');
-    return;
+  /* menu */
+  var burger=$('burger'),nav=$('nav');
+  burger.onclick=function(){var o=nav.classList.toggle('open');burger.setAttribute('aria-expanded',o)};
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A'){nav.classList.remove('open');burger.setAttribute('aria-expanded',false)}});
+
+  /* routing */
+  function route(){
+    var h=location.hash.slice(1),isApp=h==='automation';
+    document.body.classList.toggle('locked',!approved);
+    gate.hidden=approved;$('signout').hidden=!approved;
+    landing.hidden=!approved||isApp;app.hidden=!approved||!isApp;
+    if(!approved){window.scrollTo(0,0);return}
+    if(isApp)window.scrollTo(0,0);
+    else if(h&&h!=='top'){var el=$(h);if(el)requestAnimationFrame(function(){el.scrollIntoView()})}
+    else window.scrollTo(0,0);
   }
-  document.getElementById('scheduledVal').textContent = (d && t) ? (d+' at '+t) : 'Immediately';
-  document.getElementById('setup').style.display='none';
+  window.addEventListener('hashchange',route);
 
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      fileName: fileName,
-      scheduledDate: d || null,
-      scheduledTime: t || null,
-      source: 'autotube-ai-prototype'
+  /* toast */
+  var tt=$('toast'),tm;
+  function toast(m){tt.textContent=m;tt.classList.add('show');clearTimeout(tm);tm=setTimeout(function(){tt.classList.remove('show')},2600)}
+
+  /* scheduler */
+  function pad(n){return String(n).padStart(2,'0')}
+  function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+  var tz='UTC';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'}catch(e){}
+  var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+  $('date').value=iso(tomorrow);$('time').value='18:00';$('date').min=iso(new Date());
+  function mode(){return document.querySelector('input[name="when"]:checked').value}
+  $('dstart').value=iso(tomorrow);$('dstart').min=iso(new Date());$('dtime').value='18:00';$('dend').min=iso(new Date());
+  function srcMode(){return document.querySelector('input[name="tsrc"]:checked').value}
+  function nextRun(){
+    var el=$('next');if(mode()!=='daily')return;
+    var t=$('dtime').value,s=$('dstart').value,f=$('freq').value;
+    if(!t||!s){el.textContent='';return}
+    var d=new Date(s+'T'+t),n=new Date(),g=0;
+    if(f==='weekly'){while(d<n&&g++<60)d.setDate(d.getDate()+7)}
+    else{while((d<n||(f==='weekdays'&&(d.getDay()===0||d.getDay()===6)))&&g++<400)d.setDate(d.getDate()+1)}
+    el.textContent='First upload: '+d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' · '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+  }
+  function syncSrc(){var l=srcMode()==='list';$('lbl-list').hidden=!l;$('lbl-auto').hidden=l;$('e-date').textContent=''}
+  function syncMode(){
+    var m=mode();
+    $('when-fields').hidden=m!=='later';$('daily-fields').hidden=m!=='daily';$('topic-lbl').hidden=m==='daily';
+    $('go').textContent=m==='now'?'Upload now':(m==='later'?'Schedule video':'Start daily uploads');
+    $('e-date').textContent='';$('e-topic').textContent='';nextRun();
+  }
+  document.querySelectorAll('input[name="when"]').forEach(function(r){r.addEventListener('change',syncMode)});
+  document.querySelectorAll('input[name="tsrc"]').forEach(function(r){r.addEventListener('change',syncSrc)});
+  ['freq','dtime','dstart'].forEach(function(i){$(i).addEventListener('change',nextRun)});
+
+  /* ---- one-time account setup ---- */
+  var WEBHOOK_URL='https://hook.eu1.make.com/uon0l7kdtvfsy4p86i81xvoa08u2u3en';    /* paste your Make webhook URL here before hosting the site */
+  var GOOGLE_CLIENT_ID='780306469308-ok2rbfaooegsj9tqglcliskbmc98nu46.apps.googleusercontent.com';
+  var SCOPES='https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly';
+  var DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
+  var keys={};
+  try{keys=JSON.parse(localStorage.getItem('autotube-keys')||'{}')}catch(e){}
+  function saveKeys(){try{localStorage.setItem('autotube-keys',JSON.stringify(keys))}catch(e){}}
+
+  /* connected YouTube channels (one entry per channel, each with its own Google token) */
+  function accts(){if(!keys.accts)keys.accts=[];return keys.accts}
+  function live(c){return c.exp>Date.now()}
+  function active(){
+    var a=accts(),i;
+    for(i=0;i<a.length;i++)if(a[i].id===keys.active&&live(a[i]))return a[i];
+    for(i=0;i<a.length;i++)if(live(a[i]))return a[i];
+    return null;
+  }
+  function gOn(){return !!active()}
+  function dOn(){return !!keys.drive&&keys.drive.exp>Date.now()}
+  var editing=false;
+  var tab='ai';
+
+  function paintChannels(){
+    var a=accts(),ul=$('ch-list'),sel=$('chsel'),act=active(),anyLive=false;
+    ul.innerHTML='';sel.innerHTML='';
+    a.forEach(function(c){
+      var isLive=live(c),isAct=!!act&&act.id===c.id,li=document.createElement('li'),av,d=document.createElement('div'),b=document.createElement('b'),s=document.createElement('small'),acts=document.createElement('div'),x=document.createElement('button');
+      if(c.thumb&&c.thumb.indexOf('https://')===0){av=document.createElement('img');av.src=c.thumb;av.alt='';av.referrerPolicy='no-referrer'}
+      else{av=document.createElement('span');av.className='av';av.textContent=(c.name||'?').charAt(0).toUpperCase()}
+      b.textContent=c.name;s.textContent=isLive?(isAct?'Selected for uploads':'Connected'):'Expired, add this account again';
+      d.appendChild(b);d.appendChild(s);acts.className='acts';
+      if(isLive&&!isAct){var u=document.createElement('button');u.type='button';u.textContent='Use';u.onclick=function(){keys.active=c.id;saveKeys();paintSetup()};acts.appendChild(u)}
+      x.type='button';x.className='x';x.textContent='×';x.setAttribute('aria-label','Remove '+c.name);
+      x.onclick=function(){keys.accts=accts().filter(function(k){return k.id!==c.id});if(keys.active===c.id)keys.active='';saveKeys();paintSetup()};
+      acts.appendChild(x);li.className=isAct?'on':'';li.appendChild(av);li.appendChild(d);li.appendChild(acts);ul.appendChild(li);
+      if(isLive){anyLive=true;var o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)}
+    });
+    ul.hidden=!a.length;
+    $('ch-lbl').hidden=!anyLive;
+    if(act)sel.value=act.id;
+    var us=$('up-chsel');us.innerHTML=sel.innerHTML;if(act)us.value=act.id;$('up-ch-lbl').hidden=!anyLive;
+  }
+  $('chsel').onchange=function(){keys.active=$('chsel').value;saveKeys();paintSetup()};
+  $('up-chsel').onchange=function(){keys.active=$('up-chsel').value;saveKeys();paintSetup()};
+  $('tab-ai').onclick=function(){tab='ai';paintSetup()};
+  $('tab-up').onclick=function(){tab='up';paintSetup()};
+
+  function paintSetup(){
+    var ready=!!(keys.j2v&&keys.gem),act=active(),n=accts().length,dr=keys.drive,dok=dOn();
+    var shown=ready&&!editing;$('setup').hidden=shown;$('status').hidden=!shown;$('tabs').hidden=!shown;$('form').hidden=!shown||tab!=='ai';$('upform').hidden=!shown||tab!=='up';$('tab-ai').className=tab==='ai'?'on':'';$('tab-up').className=tab==='up'?'on':'';
+    var g=$('g-state');g.textContent=act?('Connected: '+act.name):(n?'Expired, add again':'Not connected');g.className=act?'on':'';
+    $('g-btn').textContent=n?'Add another account':'Add YouTube account';
+    var ds=$('d-state');ds.textContent=dok?('Connected: '+(dr.email||dr.name||'Google Drive')):(dr?'Expired, connect again':'Not connected');ds.className=dok?'on':'';
+    $('d-btn').textContent=dr?'Reconnect':'Connect Google Drive';
+    $('d-off').hidden=!dr;
+    $('st-detail').textContent='· '+(act?('Channel: '+act.name):'no YouTube channel')+' · '+(dok?'Drive connected':'Drive not connected');
+    $('k-j2v').placeholder=keys.j2v?'Saved. Leave blank to keep it.':'Paste your key';
+    $('k-gem').placeholder=keys.gem?'Saved. Leave blank to keep it.':'Paste your key';
+    paintChannels();
+  }
+  $('save-keys').onclick=function(){
+    var a=$('k-j2v').value.trim()||keys.j2v||'',b=$('k-gem').value.trim()||keys.gem||'';
+    if(a.length<8||b.length<8){$('e-keys').textContent='Please add both API keys.';return}
+    $('e-keys').textContent='';keys.j2v=a;keys.gem=b;saveKeys();
+    $('k-j2v').value='';$('k-gem').value='';editing=false;paintSetup();toast('Accounts saved');
+  };
+  $('edit-keys').onclick=function(){editing=true;paintSetup()};
+
+  /* Google sign-in script: load early so the popup opens right when a button is clicked */
+  function loadGsi(cb){
+    if(window.google&&google.accounts&&google.accounts.oauth2){if(cb)cb();return}
+    var s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;
+    s.onload=function(){if(cb)cb()};s.onerror=function(){if(cb)toast('Google sign-in could not load here')};
+    document.head.appendChild(s);
+  }
+  loadGsi();
+  function withGoogle(run){
+    if(!GOOGLE_CLIENT_ID){toast('Google sign-in is not set up on this site yet');return}
+    loadGsi(run);
+  }
+
+  /* Add a YouTube account: Google's own popup, then read the channel name */
+  $('g-btn').onclick=function(){withGoogle(function(){
+    var c=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:SCOPES,prompt:'select_account',include_granted_scopes:false,
+      callback:function(r){
+        if(!r||!r.access_token){toast('Google sign-in was cancelled');return}
+        var exp=Date.now()+(r.expires_in||3600)*1000-60000;
+        fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true',{headers:{Authorization:'Bearer '+r.access_token}})
+          .then(function(x){return x.json()})
+          .then(function(j){
+            if(j&&j.error){toast('YouTube said: '+(j.error.message||'error'));return}
+            var it=j&&j.items&&j.items[0];
+            if(!it){toast('No YouTube channel found on that Google account');return}
+            var th=(it.snippet&&it.snippet.thumbnails&&it.snippet.thumbnails.default&&it.snippet.thumbnails.default.url)||'';
+            var rec={id:it.id,name:(it.snippet&&it.snippet.title)||'My channel',thumb:th,token:r.access_token,exp:exp},a=accts(),i,f=false;
+            for(i=0;i<a.length;i++)if(a[i].id===rec.id){a[i]=rec;f=true}
+            if(!f)a.push(rec);
+            keys.active=rec.id;saveKeys();paintSetup();toast('Connected: '+rec.name);
+          })
+          .catch(function(){toast('Signed in to Google, but could not read the channel')});
+      },
+      error_callback:function(){toast('Google sign-in was cancelled')}});
+    c.requestAccessToken();
+  })};
+
+  /* Connect Google Drive: its own Google popup, then read the account name and email */
+  $('d-btn').onclick=function(){withGoogle(function(){
+    var c=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:DRIVE_SCOPE,prompt:'select_account',include_granted_scopes:false,
+      callback:function(r){
+        if(!r||!r.access_token){toast('Google sign-in was cancelled');return}
+        var exp=Date.now()+(r.expires_in||3600)*1000-60000;
+        fetch('https://www.googleapis.com/drive/v3/about?fields=user(displayName,emailAddress)',{headers:{Authorization:'Bearer '+r.access_token}})
+          .then(function(x){return x.json()})
+          .then(function(j){
+            if(j&&j.error){
+              var m=String(j.error.message||''),dis=/has not been used|disabled|accessNotConfigured/i.test(m+(j.error.status||''));
+              var msg=dis?'Google Drive API is switched off in the Google Cloud project. Open console.cloud.google.com, APIs & Services, Library, search Google Drive API, click Enable, then press Connect again.':'Google Drive said: '+m;
+              var el=$('e-keys');if(el){el.textContent=msg;el.style.display='block'}
+              toast(dis?'Enable the Google Drive API in Google Cloud first':'Google Drive said: '+m);return}
+            var el2=$('e-keys');if(el2)el2.textContent='';
+            var u=(j&&j.user)||{};
+            keys.drive={name:u.displayName||'',email:u.emailAddress||'',token:r.access_token,exp:exp};
+            saveKeys();paintSetup();toast('Google Drive connected');
+          })
+          .catch(function(){toast('Signed in to Google, but could not confirm Google Drive')});
+      },
+      error_callback:function(e){toast(e&&e.type==='popup_failed_to_open'?'Popup was blocked. Allow popups for this site and try again':'Google sign-in was cancelled')}});
+    c.requestAccessToken();
+  })};
+  $('d-off').onclick=function(){delete keys.drive;saveKeys();paintSetup();toast('Google Drive disconnected')};
+
+  /* Get my key: open the provider page, then paste from the clipboard when the user allows it */
+  var KEYRULE={'k-gem':/^AIza[0-9A-Za-z_-]{30,}$/,'k-j2v':/^[0-9A-Za-z_.-]{16,128}$/};
+  var waiting='';
+  function takeClip(id,loud){
+    if(!navigator.clipboard||!navigator.clipboard.readText){if(loud)toast('Click the box and press Ctrl+V to paste');return}
+    navigator.clipboard.readText().then(function(t){
+      t=(t||'').trim();
+      if(KEYRULE[id].test(t)){$(id).value=t;waiting='';toast('Key pasted')}
+      else if(loud)toast('The clipboard does not look like that key. Copy it again.');
+    }).catch(function(){if(loud)toast('Could not read the clipboard. Click the box and press Ctrl+V.')});
+  }
+  document.querySelectorAll('[data-paste]').forEach(function(b){b.onclick=function(){takeClip(b.getAttribute('data-paste'),true)}});
+  document.querySelectorAll('a.getkey').forEach(function(a){a.addEventListener('click',function(){waiting=a.getAttribute('data-for')})});
+  window.addEventListener('focus',function(){if(waiting&&!$('setup').hidden)takeClip(waiting,false)});
+  paintSetup();
+
+  var queue=[];try{queue=JSON.parse(localStorage.getItem('autotube-queue-v2')||'[]')}catch(e){}
+  function persist(){try{localStorage.setItem('autotube-queue-v2',JSON.stringify(queue))}catch(e){}}
+  function copy(txt){
+    function fb(){var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');toast('Request copied')}catch(e){toast('Could not copy')}document.body.removeChild(t)}
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(function(){toast('Request copied')},fb);else fb();
+  }
+  function withKeys(q){
+    var o={};Object.keys(q).forEach(function(k){if(k!=='status')o[k]=q[k]});
+    var act=active();
+    o.keys={json2video:keys.j2v||'',gemini:keys.gem||'',google_access_token:act?act.token:'',youtube_channel_id:act?act.id:'',youtube_channel_name:act?act.name:'',google_drive_token:dOn()?keys.drive.token:'',google_drive_email:dOn()?(keys.drive.email||''):''};return o;
+  }
+  function fmt(q){
+    if(q.when==='daily'){
+      var t0=new Date('2000-01-01T'+q.time).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),
+          fq={daily:'Every day',weekdays:'Weekdays',weekly:'Every week'}[q.frequency]||'Every day',
+          n=(q.topics||[]).length;
+      return fq+' · '+t0+' · '+(q.topicMode==='auto'?'AI-picked topics':n+(n===1?' topic':' topics'));
+    }
+    if(q.when==='upload'){
+      var pa=q.publish_at?new Date(q.publish_at):null;
+      return (pa?'Scheduled '+pa.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' \u00b7 '+pa.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'Upload now')+' \u00b7 '+(q.title_mode==='ai'?'AI titles':'Own titles');
+    }
+    if(q.when==='now')return 'Upload now · '+new Date(q.created).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+    var d=new Date(q.date+'T'+q.time);
+    return d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' · '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+  }
+  function render(){
+    var ul=$('queue');ul.innerHTML='';
+    queue.forEach(function(q,i){
+      var li=document.createElement('li'),b=document.createElement('b'),s=document.createElement('small'),a=document.createElement('div'),c=document.createElement('button'),x=document.createElement('button');
+      b.textContent=q.when==='daily'?(q.topicMode==='auto'?'Daily: '+q.niche:'Daily: '+q.topic):q.topic;s.textContent=fmt(q)+(q.status?' · '+q.status:'');a.className='acts';
+      c.type='button';c.textContent='Copy';c.onclick=function(){copy(JSON.stringify(withKeys(q)))};
+      x.type='button';x.className='x';x.textContent='×';x.setAttribute('aria-label','Remove '+q.topic);x.onclick=function(){queue.splice(i,1);persist();render()};
+      a.appendChild(c);a.appendChild(x);li.appendChild(b);li.appendChild(a);li.appendChild(s);ul.appendChild(li);
+    });
+    $('qempty').hidden=queue.length>0;
+  }
+
+  /* ---- Upload & Schedule tab ---- */
+  var upFiles=[];
+  var upTomorrow=new Date();upTomorrow.setDate(upTomorrow.getDate()+1);
+  $('up-date').value=iso(upTomorrow);$('up-date').min=iso(new Date());$('up-time').value='18:00';
+  function tmode(){return document.querySelector('input[name="tmode"]:checked').value}
+  function uwhen(){return document.querySelector('input[name="uwhen"]:checked').value}
+  function cleanLine(s){return String(s||'').replace(/["“”]/g,"'").replace(/[\\\r\n\t]+/g,' ').replace(/\s+/g,' ').trim()}
+  function cleanText(s){return String(s||'').replace(/["“”]/g,"'").replace(/\\/g,'').replace(/\r/g,'').split('\n').map(function(l){return l.replace(/\t/g,' ').trim()}).join('\\n').trim()}
+  function sizeLabel(n){return n>=1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB'}
+  function upNext(){
+    var el=$('up-next'),n=upFiles.length;
+    if(uwhen()!=='later'||!$('up-date').value||!$('up-time').value){el.textContent='';return}
+    var s=new Date($('up-date').value+'T'+$('up-time').value),gap=+$('up-gap').value*3600000,fmtD=function(d){return d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' · '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})};
+    el.textContent=n>1?('First: '+fmtD(s)+'  ->  Last: '+fmtD(new Date(s.getTime()+(n-1)*gap))):('Publishes: '+fmtD(s));
+  }
+  function syncUp(){
+    var man=tmode()==='manual',later=uwhen()==='later';
+    $('up-hint-lbl').hidden=man;$('up-sched').hidden=!later;$('up-gap-lbl').hidden=upFiles.length<2;
+    document.querySelectorAll('#up-list .man').forEach(function(m){m.hidden=!man});
+    $('up-go').textContent=upFiles.length>1?('Upload '+upFiles.length+' videos'):'Upload video';
+    upNext();
+  }
+  function renderUp(){
+    var ul=$('up-list');ul.innerHTML='';
+    upFiles.forEach(function(f,i){
+      var li=document.createElement('li'),fh=document.createElement('div'),b=document.createElement('b'),sm=document.createElement('small'),x=document.createElement('button'),
+          man=document.createElement('div'),ti=document.createElement('input'),de=document.createElement('textarea'),bar=document.createElement('div'),bi=document.createElement('i'),st=document.createElement('small');
+      fh.className='fh';b.textContent=f.file.name;sm.textContent=sizeLabel(f.file.size);
+      x.type='button';x.textContent='×';x.setAttribute('aria-label','Remove '+f.file.name);x.onclick=function(){if(upBusy)return;upFiles.splice(i,1);renderUp()};
+      fh.appendChild(b);fh.appendChild(sm);fh.appendChild(x);
+      man.className='man';
+      ti.type='text';ti.maxLength=100;ti.placeholder='Title';ti.value=f.title;ti.oninput=function(){f.title=ti.value};
+      de.placeholder='Description (add hashtags if you like)';de.maxLength=4900;de.value=f.desc;de.oninput=function(){f.desc=de.value};
+      man.appendChild(ti);man.appendChild(de);
+      bar.className='bar';bar.appendChild(bi);st.className='stt';
+      f.set=function(msg,pct,cls){st.textContent=msg||'';st.className='stt'+(cls?' '+cls:'');if(typeof pct==='number')bi.style.width=pct+'%'};
+      li.appendChild(fh);li.appendChild(man);li.appendChild(bar);li.appendChild(st);ul.appendChild(li);
+    });
+    syncUp();
+  }
+  var upBusy=false;
+  $('up-files').addEventListener('change',function(){
+    var list=Array.prototype.slice.call(this.files||[]),room=20-upFiles.length,added=0;
+    list.forEach(function(file){
+      var ok=/^video\//.test(file.type)||/\.(mp4|mov|m4v|webm|avi|mkv)$/i.test(file.name);
+      if(!ok||added>=room)return;
+      upFiles.push({file:file,title:cleanLine(file.name.replace(/\.[^.]+$/,'')).slice(0,100),desc:''});added++;
+    });
+    if(list.length>added)$('e-up').textContent='Only video files are added, up to 20 at a time.';else $('e-up').textContent='';
+    this.value='';renderUp();
+  });
+  document.querySelectorAll('input[name="tmode"],input[name="uwhen"]').forEach(function(r){r.addEventListener('change',syncUp)});
+  ['up-date','up-time','up-gap'].forEach(function(i){$(i).addEventListener('change',upNext)});
+
+  /* save one file to the user's Google Drive (resumable upload straight from the browser) */
+  function driveUpload(f){
+    var file=f.file,tok=keys.drive.token;
+    return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id',{method:'POST',
+      headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':file.type||'video/mp4','X-Upload-Content-Length':String(file.size)},
+      body:JSON.stringify({name:file.name})})
+    .then(function(r){
+      if(!r.ok)return r.json().then(function(j){throw new Error((j&&j.error&&j.error.message)||('Google Drive error '+r.status))},function(){throw new Error('Google Drive error '+r.status)});
+      var loc=r.headers.get('Location');
+      if(!loc)throw new Error('Google Drive did not give an upload address');
+      return loc;
     })
-  }).then(res=>{
-    console.log('Webhook response:', res.status);
-  }).catch(err=>{
-    console.error('Webhook call failed:', err);
+    .then(function(loc){return new Promise(function(res,rej){
+      var x=new XMLHttpRequest();x.open('PUT',loc);
+      x.upload.onprogress=function(ev){if(ev.lengthComputable){var p=Math.round(ev.loaded/ev.total*100);f.set('Saving to Google Drive '+p+'%',p)}};
+      x.onload=function(){
+        if(x.status>=200&&x.status<300){try{var id=JSON.parse(x.responseText).id;if(!id)throw 0;res(id)}catch(e){rej(new Error('Google Drive reply was unreadable'))}}
+        else rej(new Error('Google Drive error '+x.status));
+      };
+      x.onerror=function(){rej(new Error('Network error while saving to Google Drive'))};
+      x.send(file);
+    })});
+  }
+
+  $('upform').addEventListener('submit',function(e){
+    e.preventDefault();
+    var err=$('e-up');err.textContent='';
+    if(upBusy)return;
+    if(!upFiles.length){err.textContent='Choose at least one video.';return}
+    if(!gOn()){err.textContent='Your YouTube sign-in has expired. Click Edit keys and add your channel again.';return}
+    if(!dOn()){err.textContent='Your Google Drive sign-in has expired. Click Edit keys and reconnect Google Drive.';return}
+    if(!WEBHOOK_URL){err.textContent='No webhook is set on this site yet.';return}
+    var tm=tmode(),later=uwhen()==='later',startMs=0,gap=+$('up-gap').value*3600000;
+    if(later){
+      startMs=new Date($('up-date').value+'T'+$('up-time').value).getTime();
+      if(!$('up-date').value||!$('up-time').value||isNaN(startMs)||startMs<Date.now()+10*60000){err.textContent='Choose a first publish time at least 10 minutes from now.';return}
+    }
+    if(tm==='manual'){
+      for(var k=0;k<upFiles.length;k++)if(cleanLine(upFiles[k].title).length<2){err.textContent='Add a title for every video, or switch to AI titles.';return}
+    }
+    upBusy=true;$('up-go').disabled=true;
+    var done=0,failed=0,chain=Promise.resolve();
+    upFiles.forEach(function(f,i){
+      chain=chain.then(function(){
+        f.set('Starting...',0);
+        return driveUpload(f).then(function(id){
+          f.set('Saved to Drive. Sending to YouTube...',100);
+          var item={topic:f.file.name,when:'upload',mode:'upload',drive_file_id:id,file_name:cleanLine(f.file.name).slice(0,150),
+            title_mode:tm,title:tm==='manual'?cleanLine(f.title).slice(0,100):'',description:tm==='manual'?cleanText(f.desc).slice(0,4900):'',
+            hint:tm==='ai'?cleanLine($('up-hint').value).slice(0,300):'',publish_at:later?new Date(startMs+i*gap).toISOString():'',timezone:tz,created:new Date().toISOString()};
+          return fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(withKeys(item))}).then(function(r){
+            if(!r.ok)throw new Error('Make did not accept the request');
+            item.status=later?'Scheduled in Make':'Sent to Make';done++;
+            f.set(later?'Done. YouTube will publish it at the scheduled time.':'Done. It is uploading to YouTube now.',100,'good');
+            queue.unshift(item);persist();render();
+          });
+        }).catch(function(er){failed++;f.set('Failed: '+((er&&er.message)||'error'),0,'bad')});
+      });
+    });
+    chain.then(function(){
+      upBusy=false;$('up-go').disabled=false;
+      toast(failed?(done+' sent, '+failed+' failed'):(done>1?done+' videos sent':'Video sent'));
+      if(!failed){upFiles=[];setTimeout(function(){if(!upBusy)renderUp()},4000)}
+    });
   });
-  document.getElementById('proc').classList.add('active');
-  const items=['p1','p2','p3','p4','p5'];
-  items.forEach((id,i)=>{
-    setTimeout(()=>document.getElementById(id).classList.add('on'), (i+1)*650);
+  $('form').addEventListener('submit',function(e){
+    e.preventDefault();
+    function clean(s){return s.replace(/["“”]/g,"'").replace(/[\\\r\n\t]+/g,' ').trim()}
+    var m=mode(),now=m==='now',daily=m==='daily',ok=true,
+        topic=clean($('topic').value),date=$('date').value,time=$('time').value,
+        topics=[],niche='',src=srcMode(),f=$('freq').value,ds=$('dstart').value,dt=$('dtime').value,de=$('dend').value;
+    $('e-topic').textContent='';$('e-date').textContent='';
+    if(daily){
+      if(src==='list'){
+        topics=$('topics').value.split(/\n/).map(clean).filter(function(t){return t.length>=4}).slice(0,60);
+        if(!topics.length){$('e-date').textContent='Add at least one topic, one per line.';ok=false}
+      }else{
+        niche=clean($('niche').value);
+        if(niche.length<4){$('e-date').textContent='Describe your channel niche.';ok=false}
+      }
+      if(ok){
+        if(!ds||!dt){$('e-date').textContent='Choose a start date and upload time.';ok=false}
+        else if(de&&de<ds){$('e-date').textContent='The stop date must be after the start date.';ok=false}
+      }
+    }else{
+      if(topic.length<4){$('e-topic').textContent='Please enter a topic.';ok=false}
+      if(!now){
+        if(!date||!time){$('e-date').textContent='Please choose a date and time.';ok=false}
+        else if(new Date(date+'T'+time)<new Date()){$('e-date').textContent='Choose a time in the future.';ok=false}
+      }
+    }
+    if(!ok)return;
+    var item=daily?{id:'d'+Date.now().toString(36),topic:topics[0]||niche,when:'daily',frequency:f,time:dt,startDate:ds,endDate:de||'',timezone:tz,topicMode:src,topics:topics,niche:niche,created:new Date().toISOString()}
+      :now?{topic:topic,when:'now',created:new Date().toISOString(),timezone:tz}:{topic:topic,when:'later',date:date,time:time,timezone:tz};
+    var hook=WEBHOOK_URL;
+    if(hook){
+      $('go').disabled=true;
+      fetch(hook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(withKeys(item))})
+        .then(function(r){if(!r.ok)throw new Error('bad');item.status=daily?'Daily plan sent to Make':(now?'Sent to Make':'Scheduled in Make');toast(daily?'Daily uploads sent to Make':(now?'Sent. Your video is being made.':'Video scheduled'))})
+        .catch(function(){item.status='Not sent';copy(JSON.stringify(withKeys(item)));toast('Could not reach Make from here. Request copied instead.')})
+        .then(function(){$('go').disabled=false;queue.unshift(item);persist();render();$('topic').value='';$('topics').value='';$('niche').value=''});
+    }else{
+      item.status=daily?'Daily plan ready':(now?'Ready to send':'Scheduled');queue.unshift(item);persist();render();$('topic').value='';$('topics').value='';$('niche').value='';
+      toast('Saved. No webhook is set on this site yet, so press Copy to send it.');
+    }
   });
-  setTimeout(()=>{
-    document.getElementById('proc').classList.remove('active');
-    document.getElementById('doneScreen').classList.add('active');
-  }, items.length*650 + 500);
-}
-function resetFlow(){
-  document.getElementById('doneScreen').classList.remove('active');
-  document.getElementById('setup').style.display='block';
-  ['p1','p2','p3','p4','p5'].forEach(id=>document.getElementById(id).classList.remove('on'));
-  [1,2,3].forEach(n=>document.getElementById('step'+n).classList.remove('done','active'));
-  document.getElementById('step1').classList.add('active');
-  document.getElementById('goBtn').disabled=true;
-}
+  /* ---- private beta gate: request access + approval check (Make reads your Google Sheet) ---- */
+  function validMail(em){return /^[a-z0-9._%+-]+@gmail\.com$/.test(em)}
+  function readMail(id){return $(id).value.replace(/\s+/g,'').toLowerCase().slice(0,120)}
+  function checkEmail(em){
+    return fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'check',email:em})})
+      .then(function(r){return r.text()})
+      .then(function(t){var j=null;try{j=JSON.parse(t)}catch(e){}return !!(j&&j.approved===true)})
+      .catch(function(){return null});
+  }
+  function lockSite(){approved=false;try{localStorage.removeItem(ACC_KEY)}catch(e){}route()}
+  if(approved&&Date.now()-acc0.ts>12*36e5){
+    checkEmail(acc0.email).then(function(ok){
+      if(ok===true){try{localStorage.setItem(ACC_KEY,JSON.stringify({email:acc0.email,ts:Date.now()}))}catch(e){}}
+      else if(ok===false)lockSite();
+    });
+  }
+  $('signout').addEventListener('click',function(e){e.preventDefault();lockSite();location.hash='';toast('Signed out')});
+  $('chkform').addEventListener('submit',function(e){
+    e.preventDefault();
+    var em=readMail('chk-email'),er=$('e-chk');er.textContent='';
+    if(!validMail(em)){er.textContent='Please enter your Gmail address (ending in @gmail.com).';return}
+    $('chk-go').disabled=true;$('chk-go').textContent='Checking...';
+    checkEmail(em).then(function(ok){
+      $('chk-go').disabled=false;$('chk-go').textContent='Enter';
+      if(ok===true){
+        try{localStorage.setItem(ACC_KEY,JSON.stringify({email:em,ts:Date.now()}))}catch(x){}
+        approved=true;acc0={email:em,ts:Date.now()};location.hash='';route();toast('Welcome to Autotube AI');
+      }else if(ok===false){er.textContent='This Gmail is not approved yet. Request access on the left, then try again after we add you.'}
+      else{er.textContent='Could not check right now. Please try again in a moment.'}
+    });
+  });
+  $('accform').addEventListener('submit',function(e){
+    e.preventDefault();
+    var nm=$('acc-name').value.replace(/[\r\n\t\\"]+/g,' ').trim().slice(0,60),em=readMail('acc-email'),er=$('e-acc');
+    er.textContent='';$('ok-acc').hidden=true;
+    if(nm.length<2){er.textContent='Please enter your name.';return}
+    if(!validMail(em)){er.textContent='Please enter a valid Gmail address (ending in @gmail.com).';return}
+    $('acc-go').disabled=true;
+    fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'access',name:nm,email:em})})
+      .then(function(r){if(!r.ok)throw new Error('bad');$('ok-acc').hidden=false;$('chk-email').value=em;$('acc-name').value='';$('acc-email').value='';toast('Request sent')})
+      .catch(function(){er.textContent='Could not send your request. Please try again in a moment.'})
+      .then(function(){$('acc-go').disabled=false});
+  });
+  syncMode();
+  renderUp();
+  render();route();
+})();
 </script>
-</body>
-</html>
+
+</body></html>
