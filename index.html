@@ -206,6 +206,8 @@ textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0
 .q button:hover{color:var(--accent)}
 .empty{color:var(--muted);padding:26px;text-align:center;border:1.5px dashed var(--line);border-radius:12px;font-size:.95rem}
 .hint{color:var(--muted);font-size:.86rem;margin-top:14px}
+.sentbox{background:color-mix(in srgb,var(--ok) 12%,transparent);border:1px solid var(--ok);color:var(--fg);border-radius:12px;padding:.9rem 1.1rem;font-size:.95rem;line-height:1.5;margin-top:4px}
+.sentbox strong{color:var(--ok)}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:.8rem 1.2rem;border-radius:10px;font-weight:600;font-size:.92rem;opacity:0;pointer-events:none;transition:.25s;z-index:80}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 /* upload & schedule tab */
@@ -429,6 +431,7 @@ body.locked nav.main,body.locked .burger{display:none}
           </div>
           <div class="err" id="e-date"></div>
           <button class="btn primary" type="submit" id="go">Upload now</button>
+          <div class="sentbox" id="sentbox" role="status" hidden></div>
         </form>
         <form class="card form" id="upform" novalidate hidden>
           <div><h3>Upload and schedule your own videos</h3><p class="hint" style="margin-top:6px">Each video is saved to your Google Drive first, then uploaded to YouTube.</p></div>
@@ -518,6 +521,7 @@ body.locked nav.main,body.locked .burger{display:none}
 
   /* toast */
   var tt=$('toast'),tm;
+  function showSent(h){var b=$('sentbox');b.innerHTML=h;b.hidden=false}
   function toast(m){tt.textContent=m;tt.classList.add('show');clearTimeout(tm);tm=setTimeout(function(){tt.classList.remove('show')},2600)}
 
   /* scheduler */
@@ -885,9 +889,9 @@ body.locked nav.main,body.locked .burger{display:none}
       :now?{topic:topic,when:'now',created:new Date().toISOString(),timezone:tz}:{topic:topic,when:'later',date:date,time:time,timezone:tz};
     var hook=WEBHOOK_URL;
     if(hook){
-      $('go').disabled=true;
+      $('go').disabled=true;$('sentbox').hidden=true;
       fetch(hook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(withKeys(item))})
-        .then(function(r){if(!r.ok)throw new Error('bad');item.status=daily?'Daily plan sent to Make':(now?'Sent to Make':'Scheduled in Make');toast(daily?'Daily uploads sent to Make':(now?'Sent. Your video is being made.':'Video scheduled'))})
+        .then(function(r){if(!r.ok)throw new Error('bad');item.status=daily?'Daily plan sent to Make':(now?'Sent to Make':'Scheduled in Make');toast(daily?'Daily uploads sent to Make':(now?'Sent. Your video is being made.':'Video scheduled'));showSent(daily?'<strong>Daily plan sent.</strong> Your first video will be made and uploaded at the time you chose. You can close this page.':(now?'<strong>Sent.</strong> Your video will be on YouTube in about 5 to 10 minutes. You can close this page.':'<strong>Scheduled.</strong> Your video will be made now and published on YouTube at the time you chose. You can close this page.'))})
         .catch(function(){item.status='Not sent';copy(JSON.stringify(withKeys(item)));toast('Could not reach Make from here. Request copied instead.')})
         .then(function(){$('go').disabled=false;queue.unshift(item);persist();render();$('topic').value='';$('topics').value='';$('niche').value=''});
     }else{
