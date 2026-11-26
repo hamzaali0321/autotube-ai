@@ -25,18 +25,5 @@
         }
       ]
     }
-  ],
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "autotubeai.vercel.app"
-        }
-      ],
-      "destination": "https://cliproids.vercel.app/$1",
-      "permanent": false
-    }
   ]
 }
