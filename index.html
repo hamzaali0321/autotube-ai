@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Autotube AI</title>
+<title>Cliproids</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -243,7 +243,7 @@ body.locked nav.main,body.locked .burger{display:none}
 
 <header class="top">
   <div class="in wrap">
-    <a class="logo" href="#top" aria-label="Autotube AI home"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>Autotube <em>AI</em></a>
+    <a class="logo" href="#top" aria-label="Cliproids home"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>Clip<em>roids</em></a>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">☰</button>
     <nav class="main" id="nav">
       <a href="#how">How it works</a>
@@ -258,8 +258,8 @@ body.locked nav.main,body.locked .burger{display:none}
   <section class="desk">
     <div class="wrap">
       <div class="kicker" style="margin-bottom:12px">Private beta</div>
-      <h1 style="font-size:clamp(2.1rem,4.6vw,3.2rem)">Get access to Autotube AI</h1>
-      <p class="lead" style="margin-top:12px">Autotube AI is invite-only for now. Request access with your Gmail. When you are approved, enter the same Gmail here and the full site opens.</p>
+      <h1 style="font-size:clamp(2.1rem,4.6vw,3.2rem)">Get access to Cliproids</h1>
+      <p class="lead" style="margin-top:12px">Cliproids is invite-only for now. Request access with your Gmail. When you are approved, enter the same Gmail here and the full site opens.</p>
       <div class="gate-grid" style="margin-top:32px">
         <form class="card acc" id="accform" novalidate>
           <div><h3>1. Request access</h3><p class="hint" style="margin-top:6px">Tell us who you are. We add you, usually within a day.</p></div>
@@ -286,7 +286,7 @@ body.locked nav.main,body.locked .burger{display:none}
     <div class="wrap grid">
       <div>
         <h1>Automate your YouTube channel <span>now.</span></h1>
-        <p class="lead">Just give a topic and leave the rest to us. Autotube AI writes the script, makes the video and uploads it to your channel on a click, and you stay in control of when it goes live.</p>
+        <p class="lead">Just give a topic and leave the rest to us. Cliproids writes the script, makes the video and uploads it to your channel on a click, and you stay in control of when it goes live.</p>
         <div class="row">
           <a class="btn primary" href="#automation">Start automating</a>
           <a class="btn" href="#how">How it works</a>
@@ -297,7 +297,7 @@ body.locked nav.main,body.locked .burger{display:none}
         <div class="hd"><b>5 habits of productive developers</b><span class="pill">Running</span></div>
         <div class="it done"><span class="d">✓</span><div><b>Script written</b><span class="s">Gemini · 6 scenes</span></div><span class="t">0:30</span></div>
         <div class="it done"><span class="d">✓</span><div><b>Video created</b><span class="s">JSON2Video · 9:16</span></div><span class="t">7:10</span></div>
-        <div class="it done"><span class="d">✓</span><div><b>Saved to Google Drive</b><span class="s">Autotube Videos</span></div><span class="t">7:40</span></div>
+        <div class="it done"><span class="d">✓</span><div><b>Saved to Google Drive</b><span class="s">Cliproids Videos</span></div><span class="t">7:40</span></div>
         <div class="it now"><span class="d">4</span><div><b>Uploading to YouTube</b><span class="s">Scheduled for 6:00 PM</span></div><span class="t">now</span></div>
       </div>
     </div>
@@ -483,12 +483,12 @@ body.locked nav.main,body.locked .burger{display:none}
   <div class="wrap">
     <div class="fr">
       <div>
-        <a class="logo" href="#top"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>Autotube <em>AI</em></a>
+        <a class="logo" href="#top"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>Clip<em>roids</em></a>
         <p>Topic in, video out. Automated from script to upload.</p>
       </div>
       <ul><li><a href="#how">How it works</a></li><li><a href="#connect">Setup</a></li><li><a href="#faq">FAQ</a></li><li><a href="#automation">Automation</a></li><li><a href="#" id="signout" hidden>Sign out</a></li><li><a href="/privacy">Privacy Policy</a></li><li><a href="/terms">Terms of Service</a></li></ul>
     </div>
-    <div class="legal"><span>© 2026 Autotube AI</span><span>Not affiliated with Google, YouTube, Make or JSON2Video.</span></div>
+    <div class="legal"><span>© 2026 Cliproids</span><span>Not affiliated with Google, YouTube, Make or JSON2Video.</span></div>
   </div>
 </footer>
 <div class="toast" id="toast" role="status"></div>
@@ -925,7 +925,7 @@ body.locked nav.main,body.locked .burger{display:none}
       $('chk-go').disabled=false;$('chk-go').textContent='Enter';
       if(ok===true){
         try{localStorage.setItem(ACC_KEY,JSON.stringify({email:em,ts:Date.now()}))}catch(x){}
-        approved=true;acc0={email:em,ts:Date.now()};location.hash='';route();toast('Welcome to Autotube AI');
+        approved=true;acc0={email:em,ts:Date.now()};location.hash='';route();toast('Welcome to Cliproids');
       }else if(ok===false){er.textContent='This Gmail is not approved yet. Request access on the left, then try again after we add you.'}
       else{er.textContent='Could not check right now. Please try again in a moment.'}
     });
