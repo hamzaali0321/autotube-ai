@@ -498,8 +498,8 @@ body.locked nav.main,body.locked .burger{display:none}
 (function(){
   var $=function(i){return document.getElementById(i)};
   var landing=$('landing'),app=$('app'),gate=$('gate');
-  var approved=false,ACC_KEY='autotube-access';
-  var acc0=null;try{acc0=JSON.parse(localStorage.getItem(ACC_KEY)||'null')}catch(e){}
+  var approved=false,ACC_KEY='cliproids-access';
+  var acc0=null;try{acc0=JSON.parse(localStorage.getItem(ACC_KEY)||localStorage.getItem('autotube-access')||'null')}catch(e){}
   if(acc0&&acc0.email&&acc0.ts&&Date.now()-acc0.ts<7*864e5)approved=true;
 
   /* menu */
@@ -560,8 +560,8 @@ body.locked nav.main,body.locked .burger{display:none}
   var SCOPES='https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly';
   var DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
   var keys={};
-  try{keys=JSON.parse(localStorage.getItem('autotube-keys')||'{}')}catch(e){}
-  function saveKeys(){try{localStorage.setItem('autotube-keys',JSON.stringify(keys))}catch(e){}}
+  try{keys=JSON.parse((localStorage.getItem('cliproids-keys')||localStorage.getItem('autotube-keys')||'{}'))}catch(e){}
+  function saveKeys(){try{localStorage.setItem('cliproids-keys',JSON.stringify(keys))}catch(e){}}
 
   /* connected YouTube channels (one entry per channel, each with its own Google token) */
   function accts(){if(!keys.accts)keys.accts=[];return keys.accts}
@@ -702,8 +702,8 @@ body.locked nav.main,body.locked .burger{display:none}
   window.addEventListener('focus',function(){if(waiting&&!$('setup').hidden)takeClip(waiting,false)});
   paintSetup();
 
-  var queue=[];try{queue=JSON.parse(localStorage.getItem('autotube-queue-v2')||'[]')}catch(e){}
-  function persist(){try{localStorage.setItem('autotube-queue-v2',JSON.stringify(queue))}catch(e){}}
+  var queue=[];try{queue=JSON.parse((localStorage.getItem('cliproids-queue-v2')||localStorage.getItem('autotube-queue-v2')||'[]'))}catch(e){}
+  function persist(){try{localStorage.setItem('cliproids-queue-v2',JSON.stringify(queue))}catch(e){}}
   function copy(txt){
     function fb(){var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');toast('Request copied')}catch(e){toast('Could not copy')}document.body.removeChild(t)}
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(function(){toast('Request copied')},fb);else fb();
